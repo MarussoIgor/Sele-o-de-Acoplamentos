@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBARA & ANTARES - Usinagem e Dimensionamento</title>
+    <style>
+        :root {
+            /* Padrão de cores */
+            --ebara-blue: #00467f; 
+            --ebara-light-blue: #e6eff7;
+            --antares-yellow: #f1c40f;
+            --bg-color: #f5f7fa;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --border-radius: 6px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- SELO DE CONFIDENCIALIDADE --- */
+        .confidential-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #e53e3e;
+            color: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            max-width: 850px;
+            width: 100%;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(0, 70, 127, 0.15);
+            border-top: 5px solid var(--ebara-blue);
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--ebara-blue);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--ebara-light-blue);
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        #login-screen input {
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #login-screen button {
+            background-color: var(--ebara-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        #login-screen button:hover {
+            background-color: #003366;
+        }
+
+        #login-error {
+            color: #e53e3e;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* --- SISTEMA DE ABAS --- */
+        .tabs-nav {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #718096;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: var(--ebara-blue);
+        }
+
+        .tab-btn.active {
+            color: var(--ebara-blue);
+            border-bottom: 3px solid var(--ebara-blue);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- APLICATIVOS GERAIS --- */
+        .step {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            background-color: #fafbfc;
+        }
+
+        .step h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--ebara-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-antares {
+            border-top: 4px solid var(--antares-yellow);
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            background-color: #fff;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--ebara-blue);
+            box-shadow: 0 0 0 3px var(--ebara-light-blue);
+        }
+
+        .btn-calc {
+            background-color: var(--antares-yellow);
+            color: #000;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1.05rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-calc:hover {
+            background-color: #d4ac0d;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background-color: var(--card-bg);
+            border-top: 4px solid var(--ebara-blue);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-card.antares-card {
+            grid-column: 1 / -1;
+            border-top: 4px solid var(--antares-yellow);
+            background-color: #fffdf5;
+        }
+
+        .result-card-single {
+            grid-column: 1 / -1;
+            background-color: var(--ebara-light-blue);
+            border: 1px solid var(--ebara-blue);
+            text-align: center;
+        }
+
+        .result-card h3 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: var(--ebara-blue);
+            border-bottom: 1px solid var(--ebara-light-blue);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .dimension {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .dimension:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .dimension span {
+            font-weight: 700;
+            color: var(--ebara-blue);
+            background-color: var(--card-bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .dimension span.highlight {
+            color: #d35400;
+            font-size: 1.2rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 15px;
+        }
+        .flex-row > div {
+            flex: 1;
+        }
+
+        @media (max-width: 650px) {
+            .results-grid { grid-template-columns: 1fr; }
+            .flex-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="confidential-badge">USO INTERNO (CONFIDENCIAL)</div>
+
+    <div class="container">
+        <h1>Sistema de Integração</h1>
+
+        <div id="login-screen">
+            <p style="color: var(--ebara-blue); font-weight: bold; margin-bottom: 20px;">Acesso Restrito</p>
+            <input type="password" id="pass-input" placeholder="Digite a senha">
+            <button onclick="checkPassword()">Entrar</button>
+            <div id="login-error">Senha incorreta. Tente novamente.</div>
+        </div>
+
+        <div id="main-app" class="hidden">
+            
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="openTab('tab-usinagem', this)">Orientação - Usinagem</button>
+                <button class="tab-btn" onclick="openTab('tab-dimensionamento', this)">Dimensionador ANTARES</button>
+            </div>
+
+            <div id="tab-usinagem" class="tab-content active">
+                <div class="step">
+                    <h2>1. Acoplamento Lado Bomba</h2>
+                    <label for="bombaSelect">Selecione o Modelo da Bomba (GS, TH ou Seriada):</label>
+                    <select id="bombaSelect">
+                        <option value="">-- Escolha um modelo --</option>
+                        <optgroup label="Linha GS">
+                            <option value="gs_24">
+                                32-125.1 / 32-125 / 32-160.1 / 32-160 / 32-200 / 32-200.1 / 32-250 / 
+                                40-125 / 40-160 / 40-200 / 40-250 / 
+                                50-125 / 50-160 / 50-200 / 50-250 / 
+                                65-125 / 65-160 / 65-200 / 
+                                80-160
+                            </option>
+                            <option value="gs_32">
+                                40-315 / 50-315 / 65-250 / 65-315 / 
+                                80-200 / 80-250 / 80-315 / 
+                                100-160 / 100-200 / 100-250 / 100-315 / 
+                                125-200 / 125-250 / 
+                                150-200 / 150-250
+                            </option>
+                            <option value="gs_42">
+                                80-315L / 80-400 / 
+                                100-250L / 100-315L / 100-400 / 
+                                125-250L / 125-315 / 125-400 / 
+                                150-315 / 150-400
+                            </option>
+                            <option value="gs_48">125-500 / 150-400L</option>
+                            <option value="gs_60">150-500 / 200-400</option>
+                            <option value="gs_75">200-500</option>
+                        </optgroup>
+                        
+                        <optgroup label="Linha TH">
+                            <option value="th_24">
+                                25-150 / 25-200 / 
+                                32-125 / 32-125.1 / 32-160 / 32-160.1 / 32-200 / 32-200.1 /
+                                40-125 / 40-160 / 40-200 / 
+                                50-125 / 50-160 / 50-200 / 
+                                65-125
+                            </option>
+                            <option value="th_32">
+                                32-250 / 32-250.1 / 
+                                40-250 / 40-315 / 
+                                50-250 / 50-315 /
+                                65-160 / 65-200 / 65-250 / 
+                                80-160 / 80-200 / 80-250 / 
+                                100-160 / 100-200
+                            </option>
+                            <option value="th_42">
+                                65-315 / 80-315 / 80-400 / 
+                                100-250 / 100-315 / 100-400 / 
+                                125-200 / 125-250 / 125-315 / 125-400 / 
+                                150-200 / 150-250
+                            </option>
+                            <option value="th_48">
+                                150-315 / 150-400 / 150-500 / 200-315 / 200-400
+                            </option>
+                        </optgroup>
+    
+                        <optgroup label="Linha Seriada">
+                            <option value="ser_24_9">AEX-1 / AE-3 / R-16/18/20 / RL-20B / THB-18 / THL-18 / THS-18</option>
+                            <option value="ser_19_9">P-11</option>
+                            <option value="ser_30">P-15 / PX-15</option>
+                            <option value="ser_25">P-18</option>
+                            <option value="ser_24_9_alt">RL-14/16 (A1: 24,9 / B1: 27,7)</option>
+                            <option value="ser_38">RL-33 / TSL-40/160.2 / TSL-50/250.2</option>
+                            <option value="ser_40">TMDL-23</option>
+                            <option value="ser_45">TMDL-27</option>
+                            <option value="ser_50">TMDL-32</option>
+                        </optgroup>
+                    </select>
+                </div>
+    
+                <div class="step">
+                    <h2>2. Acoplamento Lado Motor</h2>
+                    <label for="motorSelect">Selecione a Potência, Polos e Carcaça:</label>
+                    <select id="motorSelect">
+                        <option value="">-- Escolha um motor --</option>
+                        <optgroup label="Motor Trifásico 4 Polos">
+                            <option value="m_19">1.0 CV (Carcaça 80) / 1.5 CV (Carcaça L80)</option>
+                            <option value="m_24">2.0 CV (Carcaça L90S) / 3.0 CV (Carcaça L90L)</option>
+                            <option value="m_28">4.0 / 5.0 CV (Carcaça L100L) | 6.0 CV (112M) / 7.5 CV (L112M)</option>
+                            <option value="m_38">10 CV (132S) / 12.5 CV (132M) / 15 CV (132M/L)</option>
+                            <option value="m_42">20 CV (160M) / 25 CV (160L)</option>
+                            <option value="m_48">30 CV (180M) | 40 CV - SEW (Carcaça 180L)</option>
+                            <option value="m_55">40 CV - WEG (Carcaça 200M) | 50 CV (200L)</option>
+                            <option value="m_60">60 / 75 CV (Carcaça 225S/M)</option>
+                            <option value="m_65">100 CV (Carcaça 250S/M)</option>
+                            <option value="m_75">125 / 150 CV (Carcaça 280S/M)</option>
+                            <option value="m_80">175 / 200 / 250 CV (Carcaça 315S/M)</option>
+                            <option value="m_100">300 CV - SEW/WEG (Carcaça 355M/L)</option>
+                        </optgroup>
+    
+                        <optgroup label="Motor Trifásico 2 Polos">
+                            <option value="m_14">1.0 CV (Carcaça 71)</option>
+                            <option value="m_19">1.5 CV (Carcaça 80) / 2.0 CV (Carcaça L80)</option>
+                            <option value="m_24">3.0 CV (Carcaça L90S) / 4.0 CV (Carcaça L90L)</option>
+                            <option value="m_28">5.0 CV (100L) | 6.0 / 7.5 CV (112M)</option>
+                            <option value="m_38">10 CV (132S) / 12.5 CV (132M) / 15 CV (132M/L)</option>
+                            <option value="m_42">20 / 25 CV (160M) | 30 CV (160L)</option>
+                            <option value="m_55">40 CV (200M) / 50 CV (200L) | 60 / 75 CV (225S/M)</option>
+                            <option value="m_60">100 CV (Carcaça 250S/M)</option>
+                            <option value="m_65">125 / 150 CV (280S/M) | 175 / 200 / 250 CV (315S/M)</option>
+                        </optgroup>
+                    </select>
+                </div>
+    
+                <div class="step">
+                    <h2>3. Tabela de Rosca de Fixação</h2>
+                    <label for="roscaSelect">Selecione o Modelo (AT):</label>
+                    <select id="roscaSelect">
+                        <option value="">-- Escolha um modelo de rosca --</option>
+                        <option value="1_4">AT-25 / AT-35 / AT-50</option>
+                        <option value="3_8">AT-70 / AT-90 / AT-105 / AT-140</option>
+                    </select>
+                </div>
+    
+                <div class="step hidden" id="resultadosStep">
+                    <h2>Resultados de Usinagem Final</h2>
+                    <div class="results-grid">
+                        
+                        <div class="result-card">
+                            <h3>Lado Bomba (ØA1 / B1 / C1)</h3>
+                            <svg viewBox="0 0 200 200" width="100%" style="max-width: 150px; margin: 0 auto 20px; display: block;">
+                                <circle cx="100" cy="100" r="90" stroke="#333" stroke-width="2" fill="#f5f7fa" />
+                                <circle cx="100" cy="100" r="25" stroke="#333" stroke-width="2" fill="#fff" />
+                                <rect x="94" y="60" width="12" height="18" fill="#fff" stroke="none" />
+                                <path d="M 94,75 L 94,60 L 106,60 L 106,75" stroke="#333" stroke-width="2" fill="none" />
+                            </svg>
+                            <div class="dimension">Eixo (A1): <span id="res_a1">-</span></div>
+                            <div class="dimension">Rasgo (B1): <span id="res_b1">-</span></div>
+                            <div class="dimension">Largura (C1): <span id="res_c1">-</span></div>
+                        </div>
+    
+                        <div class="result-card">
+                            <h3>Lado Motor (ØA2 / B2 / C2)</h3>
+                            <svg viewBox="0 0 200 200" width="100%" style="max-width: 150px; margin: 0 auto 20px; display: block;">
+                                <circle cx="100" cy="100" r="90" stroke="#333" stroke-width="2" fill="#f5f7fa" />
+                                <circle cx="100" cy="100" r="25" stroke="#333" stroke-width="2" fill="#fff" />
+                                <rect x="94" y="60" width="12" height="18" fill="#fff" stroke="none" />
+                                <path d="M 94,75 L 94,60 L 106,60 L 106,75" stroke="#333" stroke-width="2" fill="none" />
+                            </svg>
+                            <div class="dimension">Eixo (A2): <span id="res_a2">-</span></div>
+                            <div class="dimension">Rasgo (B2): <span id="res_b2">-</span></div>
+                            <div class="dimension">Largura (C2): <span id="res_c2">-</span></div>
+                        </div>
+    
+                        <div class="result-card result-card-single hidden" id="roscaResult">
+                            <h3>Rosca de Fixação</h3>
+                            <div class="dimension" style="justify-content: center;">
+                                Medida da Rosca:&nbsp;&nbsp;&nbsp;<span id="res_rosca" style="font-size: 1.2rem;">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-dimensionamento" class="tab-content">
+                
+                <div class="step step-antares">
+                    <h2>Calculadora de Acoplamento (Linha AT)</h2>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
+                        Dimensionamento padrão conforme procedimento e fatores de serviço da Antares (Catálogo pág. 24 e 25). Focado em aplicações para Moto Bombas. Os diâmetros são importados automaticamente da aba anterior.
+                    </p>
+
+                    <div class="flex-row">
+                        <div>
+                            <label>Potência do Motor (CV):</label>
+                            <input type="number" id="ant_cv" placeholder="Ex: 50" step="0.1" min="0.1">
+                        </div>
+                        <div>
+                            <label>Rotação (RPM):</label>
+                            <input type="number" id="ant_rpm" placeholder="Ex: 1750" step="10" min="10">
+                        </div>
+                    </div>
+
+                    <label>Fator de Serviço (Tipo de Bomba):</label>
+                    <select id="ant_fs">
+                        <option value="1.50">Bombas Normais (Centrífugas, Palhetas, Engrenagem) - F.S. 1.5</option>
+                        <option value="1.75">Bombas c/ Sobrecarga (Cavidade Progressiva) - F.S. 1.75</option>
+                        <option value="2.00">Bombas de Vácuo / Alta Densidade - F.S. 2.0</option>
+                        <option value="2.50">Bombas Alternativas (Pistão) - F.S. 2.5</option>
+                    </select>
+
+                    <div class="flex-row">
+                        <div>
+                            <label>Diâmetro Eixo Motor (mm):</label>
+                            <input type="number" id="ant_eixo_motor" placeholder="Ex: 42" step="0.1" min="1">
+                        </div>
+                        <div>
+                            <label>Diâmetro Eixo Bomba (mm):</label>
+                            <input type="number" id="ant_eixo_bomba" placeholder="Ex: 32" step="0.1" min="1">
+                        </div>
+                    </div>
+
+                    <button class="btn-calc" onclick="calcularAcoplamento()">Calcular Acoplamento Ideal</button>
+                </div>
+
+                <div class="step hidden" id="ant_resultado">
+                    <h2>Resultado do Dimensionamento</h2>
+                    <div class="results-grid">
+                        <div class="result-card antares-card">
+                            <h3 style="color: #d4ac0d; border-bottom: 1px solid #f1c40f;">Modelo Recomendado (Linha AT)</h3>
+                            
+                            <svg viewBox="0 0 200 120" width="100%" style="max-width: 250px; margin: 0 auto 20px; display: block;">
+                                <rect x="30" y="30" width="40" height="60" fill="#f1c40f" rx="5" />
+                                <rect x="130" y="30" width="40" height="60" fill="#f1c40f" rx="5" />
+                                <path d="M 65 20 Q 100 -10 135 20 L 135 100 Q 100 130 65 100 Z" fill="#2c3e50" />
+                                <rect x="15" y="45" width="20" height="30" fill="#d4ac0d" />
+                                <rect x="165" y="45" width="20" height="30" fill="#d4ac0d" />
+                                <text x="100" y="65" fill="#fff" font-size="12" font-family="Arial" font-weight="bold" text-anchor="middle" transform="rotate(-90 100,65)">ANTARES</text>
+                            </svg>
+
+                            <div class="dimension">Torque Calculado de Projeto (Tkn): <span id="res_tkn" class="highlight">-</span></div>
+                            <div class="dimension">Acoplamento Linha AT sugerido: <span id="res_modelo_antares" class="highlight" style="color:var(--ebara-blue);">-</span></div>
+                            <div class="dimension">Montagem do Cubo sugerida: <span id="res_cubo_antares">-</span></div>
+                            
+                            <p style="font-size: 0.85rem; color: #718096; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                O cálculo utilizou a fórmula: Tkn = (7024 × CV × FS) / RPM.<br>
+                                A seleção prioriza o primeiro modelo da tabela cujo Torque Nominal seja maior ou igual ao Tkn e cujo Furo Máximo (CN ou CI) suporte os eixos informados.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- SISTEMA DE ABAS ---
+        function openTab(tabId, btnElement) {
+            // Esconde todas as abas
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove a classe active dos botoes
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            
+            // Ativa a aba e o botao atual
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // --- SISTEMA DE LOGIN ---
+        const passwordInput = document.getElementById('pass-input');
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        function checkPassword() {
+            const pass = document.getElementById('pass-input').value;
+            const errorMsg = document.getElementById('login-error');
+            
+            if (pass === 'atvgs2026') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // ==========================================
+        // DADOS E LÓGICA DA ABA 1 (USINAGEM EBARA)
+        // ==========================================
+        const dbBomba = {
+            "gs_24": { a: "24 mm", b: "27 mm", c: "8 mm" },
+            "gs_32": { a: "32 mm", b: "35 mm", c: "10 mm" },
+            "gs_42": { a: "42 mm", b: "45 mm", c: "12 mm" },
+            "gs_48": { a: "48 mm", b: "51,5 mm", c: "14 mm" },
+            "gs_60": { a: "60 mm", b: "64 mm", c: "18 mm" },
+            "gs_75": { a: "75 mm", b: "79,5 mm", c: "20 mm" },
+            "th_24": { a: "24 mm", b: "26,9 mm", c: "8 mm" },
+            "th_32": { a: "32 mm", b: "35,3 mm", c: "10 mm" },
+            "th_42": { a: "42 mm", b: "45,1 mm", c: "12 mm" },
+            "th_48": { a: "48 mm", b: "52,5 mm", c: "14 mm" },
+            "ser_24_9": { a: "24,9 mm", b: "28,1 mm", c: "6,35 mm" },
+            "ser_24_9_alt": { a: "24,9 mm", b: "27,7 mm", c: "6,35 mm" },
+            "ser_19_9": { a: "19,9 mm", b: "23,1 mm", c: "6,35 mm" },
+            "ser_30": { a: "30 mm", b: "33,1 mm", c: "6,35 mm" },
+            "ser_25": { a: "25 mm", b: "28,8 mm", c: "8 mm" },
+            "ser_38": { a: "38 mm", b: "42,8 mm", c: "9,53 mm" },
+            "ser_40": { a: "40 mm", b: "46 mm", c: "12,7 mm" },
+            "ser_45": { a: "45 mm", b: "50,4 mm", c: "12,7 mm" },
+            "ser_50": { a: "50 mm", b: "55,5 mm", c: "12,7 mm" }
+        };
+
+        const dbMotor = {
+            "m_14": { a: "14 mm", b: "16 mm", c: "5 mm" },
+            "m_19": { a: "19 mm", b: "21,5 mm", c: "6 mm" },
+            "m_24": { a: "24 mm", b: "27 mm", c: "8 mm" },
+            "m_28": { a: "28 mm", b: "31 mm", c: "8 mm" },
+            "m_38": { a: "38 mm", b: "41 mm", c: "10 mm" },
+            "m_42": { a: "42 mm", b: "45 mm", c: "12 mm" },
+            "m_48": { a: "48 mm", b: "51,5 mm", c: "14 mm" }, 
+            "m_55": { a: "55 mm", b: "59 mm", c: "16 mm" }, 
+            "m_60": { a: "60 mm", b: "64 mm", c: "18 mm" },
+            "m_65": { a: "65 mm", b: "69 mm", c: "18 mm" },
+            "m_75": { a: "75 mm", b: "79,5 mm", c: "20 mm" },
+            "m_80": { a: "80 mm", b: "85 mm", c: "22 mm" },
+            "m_100": { a: "100 mm", b: "106 mm", c: "28 mm" }
+        };
+
+        const dbRosca = { "1_4": "1/4\" UNC", "3_8": "3/8\" UNC" };
+
+        const bombaSelect = document.getElementById('bombaSelect');
+        const motorSelect = document.getElementById('motorSelect');
+        const roscaSelect = document.getElementById('roscaSelect');
+        const resultadosStep = document.getElementById('resultadosStep');
+        const roscaResult = document.getElementById('roscaResult');
+
+        function checkAndDisplayResults() {
+            const bombaVal = bombaSelect.value;
+            const motorVal = motorSelect.value;
+            const roscaVal = roscaSelect.value;
+            let hasAnyResult = false;
+
+            if (bombaVal && motorVal) {
+                // Preenche Aba 1
+                document.getElementById('res_a1').textContent = dbBomba[bombaVal].a;
+                document.getElementById('res_b1').textContent = dbBomba[bombaVal].b;
+                document.getElementById('res_c1').textContent = dbBomba[bombaVal].c;
+
+                if(bombaVal === "ser_38" && bombaSelect.options[bombaSelect.selectedIndex].text.includes("RL-33")) {
+                    document.getElementById('res_b1').textContent = "42,8 mm / 42,9 mm";
+                }
+
+                document.getElementById('res_a2').textContent = dbMotor[motorVal].a;
+                document.getElementById('res_b2').textContent = dbMotor[motorVal].b;
+                document.getElementById('res_c2').textContent = dbMotor[motorVal].c;
+                hasAnyResult = true;
+
+                // PREENCHE ABA 2 AUTOMATICAMENTE EXTRAINDO APENAS O NUMERO
+                const eixoBombaStr = dbBomba[bombaVal].a;
+                const eixoMotorStr = dbMotor[motorVal].a;
+                document.getElementById('ant_eixo_bomba').value = parseFloat(eixoBombaStr.replace(' mm', '').replace(',', '.'));
+                document.getElementById('ant_eixo_motor').value = parseFloat(eixoMotorStr.replace(' mm', '').replace(',', '.'));
+
+            } else {
+                // Reset Aba 1
+                document.getElementById('res_a1').textContent = "-";
+                document.getElementById('res_b1').textContent = "-";
+                document.getElementById('res_c1').textContent = "-";
+                document.getElementById('res_a2').textContent = "-";
+                document.getElementById('res_b2').textContent = "-";
+                document.getElementById('res_c2').textContent = "-";
+                
+                // Reset Aba 2 (Limpa os inputs dependentes)
+                document.getElementById('ant_eixo_bomba').value = "";
+                document.getElementById('ant_eixo_motor').value = "";
+            }
+
+            if (roscaVal) {
+                document.getElementById('res_rosca').textContent = dbRosca[roscaVal];
+                roscaResult.classList.remove('hidden');
+                hasAnyResult = true;
+            } else {
+                roscaResult.classList.add('hidden');
+            }
+
+            if (hasAnyResult) resultadosStep.classList.remove('hidden');
+            else resultadosStep.classList.add('hidden');
+        }
+
+        bombaSelect.addEventListener('change', checkAndDisplayResults);
+        motorSelect.addEventListener('change', checkAndDisplayResults);
+        roscaSelect.addEventListener('change', checkAndDisplayResults);
+
+
+        // ==========================================
+        // DADOS E LÓGICA DA ABA 2 (DIMENSIONADOR ANTARES)
+        // ==========================================
+        
+        // Tabela 1 - Linha AT (Pagina 4 do Catálogo)
+        const dbAntaresAT = [
+            { modelo: "AT 25", torque: 45, furo_cn: 24, furo_ci: 38 },
+            { modelo: "AT 35", torque: 90, furo_cn: 32, furo_ci: 44 },
+            { modelo: "AT 50", torque: 340, furo_cn: 48, furo_ci: 60 },
+            { modelo: "AT 70", torque: 940, furo_cn: 70, furo_ci: 90 },
+            { modelo: "AT 90", torque: 1700, furo_cn: 85, furo_ci: 105 },
+            { modelo: "AT 105", torque: 2500, furo_cn: 110, furo_ci: 125 },
+            { modelo: "AT 140/100", torque: 6800, furo_cn: 110, furo_ci: 110 },
+            { modelo: "AT 140/140", torque: 6800, furo_cn: 150, furo_ci: 170 },
+            { modelo: "AT 200/90", torque: 20150, furo_cn: 110, furo_ci: 110 },
+            { modelo: "AT 200/140", torque: 20150, furo_cn: 150, furo_ci: 150 },
+            { modelo: "AT 200/200", torque: 20150, furo_cn: 210, furo_ci: 260 }
+        ];
+
+        function calcularAcoplamento() {
+            const cv = parseFloat(document.getElementById('ant_cv').value);
+            const rpm = parseFloat(document.getElementById('ant_rpm').value);
+            const fs = parseFloat(document.getElementById('ant_fs').value);
+            const eixoBomba = parseFloat(document.getElementById('ant_eixo_bomba').value);
+            const eixoMotor = parseFloat(document.getElementById('ant_eixo_motor').value);
+
+            if(!cv || !rpm || !fs || !eixoBomba || !eixoMotor) {
+                alert("Por favor, preencha todos os campos do dimensionador.");
+                return;
+            }
+
+            // Cálculo Torque Nominal de Projeto
+            const tkn = (7024 * cv * fs) / rpm;
+            
+            // Pega o maior eixo entre motor e bomba
+            const maxEixo = Math.max(eixoBomba, eixoMotor);
+
+            // Filtra o primeiro acoplamento que aguenta o torque e o furo
+            const selecionado = dbAntaresAT.find(c => c.torque >= tkn && Math.max(c.furo_cn, c.furo_ci) >= maxEixo);
+
+            const resultDiv = document.getElementById('ant_resultado');
+            
+            if(selecionado) {
+                // Checa se o furo normal dá conta ou se precisa ser o cubo invertido
+                let tipoCubo = "";
+                if (selecionado.furo_cn >= maxEixo) {
+                    tipoCubo = "Cubo Normal (CN)";
+                } else {
+                    tipoCubo = "Cubo Invertido (CI)";
+                }
+
+                document.getElementById('res_tkn').textContent = tkn.toFixed(2).replace('.', ',') + " Nm";
+                document.getElementById('res_modelo_antares').textContent = selecionado.modelo;
+                document.getElementById('res_cubo_antares').textContent = tipoCubo;
+                
+                resultDiv.classList.remove('hidden');
+            } else {
+                alert("Não foi encontrado um modelo na Linha AT que suporte esta configuração. O torque (" + tkn.toFixed(0) + " Nm) ou o eixo (" + maxEixo + " mm) excedem o limite da tabela padrão.");
+                resultDiv.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
